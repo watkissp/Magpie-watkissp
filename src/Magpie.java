@@ -81,19 +81,27 @@ public class Magpie {
         else {
             // Look for a two word (you <something> me)
             // pattern
+            int psnI = findKeyword(statement, "i", 0);
+
+            if (psnI >= 0
+                    && findKeyword(statement, "you", psnI) >= 0) {
+                response = transformIYouStatement(statement);
+            } 
+            
             int psn = findKeyword(statement, "you", 0);
 
             if (psn >= 0
                     && findKeyword(statement, "me", psn) >= 0) {
                 response = transformYouMeStatement(statement);
-            } else {
+            } 
+            
+            else {
                 response = getRandomResponse();
-            }
+            }   
         }
-
         return response;
     }
-
+    
     /**
      * Pick a default response to use if nothing else fits.
      *
@@ -258,7 +266,24 @@ public class Magpie {
         int psnOfMe = findKeyword(statement, "me", psnOfYou + 3);
 
         String restOfStatement = statement.substring(psnOfYou + 3, psnOfMe).trim();
-        return "What makes you think that I " + restOfStatement + " you?";
+        return "What makes you think that i" + restOfStatement + " you?";
+    }
+    
+    private String transformIYouStatement(String statement) {
+        //  Remove the final period, if there is one
+        statement = statement.trim();
+        String lastChar = statement.substring(statement
+                .length() - 1);
+        if (lastChar.equals(".")) {
+            statement = statement.substring(0, statement
+                    .length() - 1);
+        }
+
+        int psnOfI = findKeyword(statement, "i", 0);
+        int psnOfY = findKeyword(statement, "you", psnOfI + 2);
+
+        String restOfStatement = statement.substring(psnOfI + 2, psnOfY).trim();
+        return "Why do you " + restOfStatement + " me?";
     }
 
 } // closes Magpie class
